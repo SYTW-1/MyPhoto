@@ -1,0 +1,15 @@
+.row
+    .col-md-12
+        .panel.panel-primary
+            .panel-heading
+                %h1 Geolocalización
+            .panel-body
+                #map-canvas
+:javascript
+    function initialize() {
+        var mapOptions = {
+            zoom: 2
+        };
+        map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
+        #{@str}
+    }

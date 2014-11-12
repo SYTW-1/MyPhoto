@@ -1,0 +1,13 @@
+%html
+  %body
+    %h1 File uploader!
+    %form(method="post" enctype='multipart/form-data')   
+      %input(type='file' name='myfile')    
+      %br
+      %input(type='submit' value='Upload!')
+      - @imagenes.each do |img|
+        %tr
+          %td
+            #{img.latitude} #{img.longitude}
+            %img{:src => "data:image/png;base64,#{img.image}", :class => "img-responsive"}
+
