@@ -70,12 +70,13 @@ end
 
 get "/upload" do
   @imagenes = Image.all()
+  @str = map()
   haml :upload
 end      
     
 # Handle POST-request (Receive and save the uploaded file)
 post "/upload" do 
-  File.open('uploads/' + params['myfile'][:filename], "w") do |f|
+  #File.open('uploads/' + params['myfile'][:filename], "w") do |f|
     img = Base64.encode64(params['myfile'][:tempfile].read)
     bytes = Base64.decode64(img)
     image   = Magick::Image.from_blob(bytes).first
@@ -103,7 +104,7 @@ post "/upload" do
     lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
     
     Image.create(:image => img, :latitude => lat, :longitude => lon)
-  end
+  #end
   redirect "/upload"
 end
 get "/info" do
