@@ -7,6 +7,7 @@
     %link{:type => "text/css", :rel => "stylesheet", :href=>"//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"}
     %link{:type => "text/css", :rel => "stylesheet", :href=>"http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,200,300,700"}
     %link{:type => "text/css", :rel => "stylesheet", :href=>"/css/backgrounds.css"}
+
   %body
     %nav.navbar.navbar-inverse{:role => "navigation"}
       .container-fluid
@@ -62,20 +63,40 @@
         %h1
           %i.fa.fa-cloud-upload
           Subir imagen
+          .pull-right
+            - if session['user']
+              %button.btn.btn-success
+                %i.fa.fa-google
+                Entrar con Google
+              %button.btn.btn-success
+                %i.fa.fa-facebook
+                Entrar con Facebook
+            - else
+              %button.btn.btn-success{"onclick"=>"javascript: document.getElementById(\"save\").submit();"}
+                %i.fa.fa-save
+                Guardar
         %hr.hr#upload
-        %form.dropzone{"action"=>"/upload","method"=>"post"}
-          %label.mklabel
-            %input.hide{"name"=>"file","type"=>"file"}
-            .mark
-              %h1
-                %i.fa.fa-cloud-upload
-                Click para seleccionar
+        - if session['user']
+          .mark
+            %h1 Es necesario haber iniciado sesión para realizar esta acción.
+        -else
+          %form#save{"action"=>"/upload","method"=>"post", "enctype"=>"multipart/form-data"}
+            %label.mklabel
+              %input#file.hide{"name"=>"myfile","type"=>"file"}
+              .mark#list
+                %h1
+                  %i.fa.fa-cloud-upload
+                  Click para seleccionar
     .jumbotron.footer
       %h3 MyPhoto © 2014
-
+    -if @error
+      #error-message
+        #{@error}
   %script(src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js")
   %script(src="/js/masonry.pkgd.min.js")
   %script(src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
+  %script(src="/js/upload.js")
+  %script(src="/js/error.js")
 
   :javascript
     $(document).ready(function() {

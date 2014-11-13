@@ -69,6 +69,10 @@ end
 
 get '/' do
   @images = Image.all()
+  if session['error'] && session['error'] == 'not_coordinates'
+    @error = 'Esta imagen se almacenará pero no se puede ubicar en el mapa debido a que no tiene coordenadas.'
+    session.delete('error') 
+  end
   haml :index, :layout => :base
 end
 
@@ -92,6 +96,10 @@ post "/upload" do
     puts a
     var = latitude[0][1]
     var2 = longitude[0][1]
+    if var == nil || var2 == nil
+      session['error'] = 'not_coordinates'
+      redirect "/"
+    end
     var = var.delete(',')
     var2 = var2.delete(',')
     var = var.split(' ')
@@ -114,6 +122,7 @@ post "/upload" do
   #end
   redirect "/upload"
 end
+
 get "/info" do
   @str = map()
   puts @str
