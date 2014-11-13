@@ -102,7 +102,10 @@ post "/upload" do
     end
     lat = "#{lat[0]} #{lat[1]}.#{lat[2]} #{GPSLatitudeRef[0][1]}"
     lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
-    
+    image.format = 'JPEG'
+    # Se comprime la imagen al 25%
+    image = image.resize(0.25)
+    img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
     Image.create(:image => img, :latitude => lat, :longitude => lon)
   #end
   redirect "/upload"
