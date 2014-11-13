@@ -101,29 +101,38 @@ post "/upload" do
     end
     lat = "#{lat[0]} #{lat[1]}.#{lat[2]} #{GPSLatitudeRef[0][1]}"
     lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
-
+    
     Image.create(:image => img, :latitude => lat, :longitude => lon)
   end
   redirect "/upload"
 end
 get "/info" do
   @str = map()
+  puts @str
   haml :info
 end
 
 def map()
   str = ''
   imagenes = Image.all()
+  signo = Hash.new
+  signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
   imagenes.each do |item|
     if (item.latitude != nil)
       city = "{}"
       count = 0
-      str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
+      lat = item.latitude.split(" ");
+      val_lat = ((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]
+      lng = item.longitude.split(" ");
+      val_lng = ((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]
+      puts "Latitud: " + (val_lat).to_s
+      puts "Longitud: " + (val_lng).to_s
+      str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s});
 
               var infowindow = new google.maps.InfoWindow({
                   map: map,
                   position: pos,
-                  content: \" #{city}: #{count} \"
+                  content: \" FOTO \"
               });
               map.setCenter(pos);"
     end
