@@ -8,10 +8,11 @@ function archivo(evt) {
 		var reader = new FileReader(), urlBase64;
 		reader.onload = (function(theFile) {
 			return function(e) {
-				document.getElementById("list").innerHTML = ['<img class="thumbnail" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+				$('#list').html(['<img class="thumbnail" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join(''));
 			};
 		})(f);
 	reader.readAsDataURL(f);
 	}
+	$('#save').show();
 }
 document.getElementById('file').addEventListener('change', archivo, false);
