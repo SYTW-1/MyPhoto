@@ -67,6 +67,10 @@ get '/auth/logout' do
   redirect '/'
 end
 
+get '/' do
+  @images = Image.all()
+  haml :index, :layout => :base
+end
 
 get "/upload" do
   @imagenes = Image.all()
