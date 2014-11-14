@@ -1,0 +1,11 @@
+.jumbotron
+  #map-canvas
+%script(src="/js/map.js")
+:javascript
+    function initialize() {
+        var mapOptions = {
+            zoom: 12
+        };
+        map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
+        #{@str}
+    }
