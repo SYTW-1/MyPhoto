@@ -42,8 +42,9 @@
                   Entrar con Facebook
             - else
               %li
-                %i.fa.fa-user
-                #{session[:name]}
+                %a{:href => "/auth/logout", :title=>'Cerrar sesión'}
+                  %i.fa.fa-user
+                  #{session[:name]}
     .jumbotron.bg
       .row.space
       .row.title
