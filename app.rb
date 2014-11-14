@@ -76,6 +76,10 @@ get '/' do
   haml :index, :layout => :base
 end
 
+get '/thumb/:id' do
+  "<img src=\"/thumb/#{params['id']}\" />"
+end
+
 get "/upload" do
   @imagenes = Image.all()
   @str = map()
@@ -116,8 +120,7 @@ post "/upload" do
     image = image.resize(0.25)
     img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
     Image.create(:image => img, :latitude => lat, :longitude => lon)
-    image = image.resize(0.1)
-    image.write(params['myfile'][:filename])
+    image.thumbnail(image.columns*0.2, image.rows*0.2).write("public/thumb/#{Image.count()+1}-thumb.jpg")
   #end
   redirect "/upload"
 end
@@ -145,13 +148,14 @@ def map()
       #puts "Longitud: " + (val_lng).to_s
       str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s});
 
-              var infowindow = new google.maps.InfoWindow({
+              var infowindow = new google.maps.Marker({
                   map: map,
                   position: pos,
-                  content: \" FOTO \"
+                  icon: \"/thumb/#{item.id}-thumb.jpg\"
               });
               map.setCenter(pos);"
     end
   end
+  puts str
   str
 end
