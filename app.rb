@@ -124,7 +124,7 @@ post "/upload" do
     puts params
     image = image.resize(0.25)
     img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
-    Image.create(:image => img, :latitude => lat, :longitude => lon)
+    Image.create(:image => img,:name => params['myfile'][:filename], :latitude => lat, :longitude => lon)
     image.thumbnail(image.columns*0.2, image.rows*0.2).write("public/thumb/#{Image.count()+1}-thumb.jpg")
   #end
   redirect "/upload"
@@ -134,6 +134,17 @@ get "/info" do
   @str = map()
   #uts @str
   haml :info
+end
+
+get '/places/:filename' do
+  place = Image.first(:name => params[:filename])
+  signo = Hash.new
+  signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
+  lat = place.latitude.split(" ");
+  @val_lat = (((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]).to_s
+  lng = place.longitude.split(" ");
+  @val_lng = (((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]).to_s
+  haml :place
 end
 
 def map()
