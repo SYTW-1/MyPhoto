@@ -85,15 +85,11 @@ end
 # Handle POST-request (Receive and save the uploaded file)
 post "/upload" do 
   #File.open('uploads/' + params['myfile'][:filename], "w") do |f|
-    img = Base64.encode64(params['myfile'][:tempfile].read)
-    bytes = Base64.decode64(img)
-    image   = Magick::Image.from_blob(bytes).first
+    image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
     latitude = image.get_exif_by_entry("GPSLatitude")
     longitude = image.get_exif_by_entry("GPSLongitude")
     GPSLatitudeRef = image.get_exif_by_entry("GPSLatitudeRef")
     GPSLongitudeRef = image.get_exif_by_entry("GPSLongitudeRef")
-    a = image.get_exif_by_entry()
-    puts a
     var = latitude[0][1]
     var2 = longitude[0][1]
     if var == nil || var2 == nil
@@ -116,16 +112,19 @@ post "/upload" do
     lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
     image.format = 'JPEG'
     # Se comprime la imagen al 25%
+    puts params
     image = image.resize(0.25)
     img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
     Image.create(:image => img, :latitude => lat, :longitude => lon)
+    image = image.resize(0.1)
+    image.write(params['myfile'][:filename])
   #end
   redirect "/upload"
 end
 
 get "/info" do
   @str = map()
-  puts @str
+  #uts @str
   haml :info
 end
 
@@ -142,8 +141,8 @@ def map()
       val_lat = ((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]
       lng = item.longitude.split(" ");
       val_lng = ((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]
-      puts "Latitud: " + (val_lat).to_s
-      puts "Longitud: " + (val_lng).to_s
+      #puts "Latitud: " + (val_lat).to_s
+      #puts "Longitud: " + (val_lng).to_s
       str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s});
 
               var infowindow = new google.maps.InfoWindow({
