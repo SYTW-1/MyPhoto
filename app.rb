@@ -76,6 +76,11 @@ get '/' do
   haml :index, :layout => :base
 end
 
+get '/view/:id' do
+  data = Image.first(:id => params['id'])
+  "<img src=\"data:image/png;base64,#{data.image}\" />"
+end
+
 get '/thumb/:id' do
   "<img src=\"/thumb/#{params['id']}\" />"
 end
@@ -148,10 +153,13 @@ def map()
       #puts "Longitud: " + (val_lng).to_s
       str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s});
 
-              var infowindow = new google.maps.Marker({
+              var marker = new google.maps.Marker({
                   map: map,
                   position: pos,
                   icon: \"/thumb/#{item.id}-thumb.jpg\"
+              });
+              google.maps.event.addListener(marker, 'click', function(){
+                document.location = \"/view/#{item.id}\";
               });
               map.setCenter(pos);"
     end
