@@ -41,12 +41,12 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 
 #OmniAuth y get's de autenticación
-#use OmniAuth::Builder do
-#  config = YAML.load_file 'config/config.yml'
+use OmniAuth::Builder do
+  config = YAML.load_file 'config/config.yml'
 #  provider :google_oauth2, config['identifier_google'], config['secret_google']
 #  provider :github, config['identifier_github'], config['secret_github']
-#  provider :facebook, config['identifier_facebook'], config['secret_facebook']
-#end
+  provider :facebook, config['facebook-client'], config['facebook-secret']
+end
 
 get '/auth/:name/callback' do
   @auth = request.env['omniauth.auth']
@@ -59,7 +59,7 @@ get '/auth/:name/callback' do
     session[:name] = @auth['info'].nickname
     session[:email] = @auth['info'].email
   end
-  redirect "/upload"
+  redirect "/"
 end
 
 get '/auth/logout' do

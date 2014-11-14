@@ -31,14 +31,19 @@
               %a{:href => "/#upload"}
                 %i.fa.fa-cloud-upload
                 Subir
-            %li
-              %a{:href => "#"}
-                %i.fa.fa-google
-                Entrar con Google
-            %li
-              %a{:href => "#"}
-                %i.fa.fa-facebook
-                Entrar con Facebook
+            -if !session[:plt]
+              %li
+                %a{:href => "#"}
+                  %i.fa.fa-google
+                  Entrar con Google
+              %li
+                %a{:href => "#"}
+                  %i.fa.fa-facebook
+                  Entrar con Facebook
+            - else
+              %li
+                %i.fa.fa-user
+                #{session[:name]}
     .jumbotron.bg
       .row.space
       .row.title
