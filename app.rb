@@ -93,22 +93,23 @@ end
 
 get '/delete/all' do
   Image.all.destroy
+  system("rm -rf public/thumb/*")
   redirect '/'
 end
 # Handle POST-request (Receive and save the uploaded file)
 post "/upload" do 
-  #File.open('uploads/' + params['myfile'][:filename], "w") do |f|
-    image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
-    latitude = image.get_exif_by_entry("GPSLatitude")
-    longitude = image.get_exif_by_entry("GPSLongitude")
-    GPSLatitudeRef = image.get_exif_by_entry("GPSLatitudeRef")
-    GPSLongitudeRef = image.get_exif_by_entry("GPSLongitudeRef")
-    var = latitude[0][1]
-    var2 = longitude[0][1]
-    if var == nil || var2 == nil
-      session['error'] = 'not_coordinates'
-      redirect "/"
-    end
+  image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
+  latitude = image.get_exif_by_entry("GPSLatitude")
+  longitude = image.get_exif_by_entry("GPSLongitude")
+  GPSLatitudeRef = image.get_exif_by_entry("GPSLatitudeRef")
+  GPSLongitudeRef = image.get_exif_by_entry("GPSLongitudeRef")
+  var = latitude[0][1]
+  var2 = longitude[0][1]
+  if var == nil || var2 == nil
+    session['error'] = 'not_coordinates'
+    lat = 'nil'
+    lon = 'nil'
+  else
     var = var.delete(',')
     var2 = var2.delete(',')
     var = var.split(' ')
@@ -123,14 +124,13 @@ post "/upload" do
     end
     lat = "#{lat[0]} #{lat[1]}.#{lat[2]} #{GPSLatitudeRef[0][1]}"
     lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
-    image.format = 'JPEG'
-    # Se comprime la imagen al 25%
-    image = image.resize(0.25)
-    img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
-    id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
-    puts id_image.id
-    image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
-  #end
+  end
+  image.format = 'JPEG'
+  # Se comprime la imagen al 25%
+  image = image.resize(0.25)
+  img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
+  id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
+  image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
   redirect "/"
 end
 
@@ -146,15 +146,12 @@ def map()
   signo = Hash.new
   signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
   imagenes.each do |item|
-    if (item.latitude != nil)
-      city = "{}"
-      count = 0
+    puts item.latitude
+    if (item.latitude != 'nil')
       lat = item.latitude.split(" ");
       val_lat = ((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]
       lng = item.longitude.split(" ");
       val_lng = ((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]
-      #puts "Latitud: " + (val_lat).to_s
-      #puts "Longitud: " + (val_lng).to_s
       str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s});
 
               var marker = new google.maps.Marker({
