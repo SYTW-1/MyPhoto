@@ -39,7 +39,7 @@
           %button.btn.btn-danger#cancel{"onclick"=>"javascript: window.location = \"/\""}
             %i.fa.fa-remove
             Cancelar
-          %button.btn.btn-success#save{"onclick"=>"javascript: document.getElementById(\"saveform\").submit();"}
+          %button.btn.btn-success#save{"onclick"=>"javascript: save();"}
             %i.fa.fa-save
             Guardar
     %hr.hr
@@ -54,3 +54,5 @@
             %h1
               %i.fa.fa-cloud-upload
               Click para seleccionar
+          .mark#loading
+            %img{:src=>"/images/ajax-loader.gif"}

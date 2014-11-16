@@ -18,3 +18,8 @@ function archivo(evt) {
 }
 if(document.getElementById('file') != undefined)
 	document.getElementById('file').addEventListener('change', archivo, false);
+
+function save(){
+	$('#loading').show();
+	document.getElementById("saveform").submit();
+}
