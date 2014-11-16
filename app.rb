@@ -85,17 +85,12 @@ get '/thumb/:id' do
   "<img src=\"/thumb/#{params['id']}\" />"
 end
 
-get "/upload" do
-  @imagenes = Image.all()
-  @str = map()
-  haml :upload
-end      
-
 get '/delete/all' do
   Image.all.destroy
   system("rm -rf public/thumb/*")
   redirect '/'
 end
+
 # Handle POST-request (Receive and save the uploaded file)
 post "/upload" do 
   image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
@@ -126,18 +121,17 @@ post "/upload" do
     lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
   end
   image.format = 'JPEG'
-  # Se comprime la imagen al 25%
-  image = image.resize(0.25)
+  # Se comprime la imagen al 50%
+  image = image.resize(0.50)
   img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
   id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
   image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
   redirect "/"
 end
 
-get "/info" do
+get "/map" do
   @str = map()
-  #uts @str
-  haml :info
+  haml :map, :layout => :base
 end
 
 def map()
@@ -146,25 +140,13 @@ def map()
   signo = Hash.new
   signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
   imagenes.each do |item|
-    puts item.latitude
     if (item.latitude != 'nil')
       lat = item.latitude.split(" ");
       val_lat = ((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]
       lng = item.longitude.split(" ");
       val_lng = ((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]
-      str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s});
-
-              var marker = new google.maps.Marker({
-                  map: map,
-                  position: pos,
-                  icon: \"/thumb/#{item.id}-thumb.jpg\"
-              });
-              google.maps.event.addListener(marker, 'click', function(){
-                document.location = \"/view/#{item.id}\";
-              });
-              map.setCenter(pos);"
+      str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s}); var marker = new google.maps.Marker({ map: map, position: pos, icon: \"/thumb/#{item.id}-thumb.jpg\" }); google.maps.event.addListener(marker, 'click', function(){ document.location = \"/view/#{item.id}\"; }); map.setCenter(pos);"
     end
   end
-  puts str
   str
 end

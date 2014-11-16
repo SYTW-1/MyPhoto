@@ -108,3 +108,8 @@ label.mklabel{
   padding: 2%;
   text-align: center;
 }
+
+#map-canvas {
+  margin: 0px;
+  padding: 0px
+}

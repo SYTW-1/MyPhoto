@@ -1,0 +1,56 @@
+.jumbotron.bg
+  .row.space
+  .row.title
+    .col-md-3
+    .col-md-6
+      %h1 My Photo
+      %h2 Localiza tus fotos para no olvidar dónde las hiciste
+      %h3 Entra con Google o Facebook y guárdalas
+    .col-md-3
+  .row.space
+  .row.delimiter
+.container
+  .page-header
+    %h1#photo
+      %i.fa.fa-camera-retro
+      Últimas fotos
+      %button.btn.btn-success.pull-right#map{"onclick"=>"javascript: window.location = \"/map\""}
+        %i.fa.fa-map
+        Ver en un mapa
+    %hr.hr
+  .row#photobox.js-masonry{"data-masonry-options"=>'{ "columnWidth": 175, "itemSelector": ".item" }'}
+    - @images.each do |img|
+      %a{:href => "/view/#{img.id}", :title => "Ver imagen"}
+        %img.thumbnail.shadow.item.img-responsive{:src => "data:image/png;base64,#{img.image}"}
+  .row
+    %h1#upload
+      %i.fa.fa-cloud-upload
+      Subir imagen
+      .pull-right
+        //Provisional al contrario para no tener que loguear
+        - if session['user']
+          %button.btn.btn-success
+            %i.fa.fa-google
+            Entrar con Google
+          %button.btn.btn-success
+            %i.fa.fa-facebook
+            Entrar con Facebook
+        - else
+          %button.btn.btn-danger#cancel{"onclick"=>"javascript: window.location = \"/\""}
+            %i.fa.fa-cancel
+            Cancelar
+          %button.btn.btn-success#save{"onclick"=>"javascript: document.getElementById(\"saveform\").submit();"}
+            %i.fa.fa-save
+            Guardar
+    %hr.hr
+    - if session['user']
+      .mark
+        %h1 Es necesario haber iniciado sesión para realizar esta acción.
+    -else
+      %form#saveform{"action"=>"/upload","method"=>"post", "enctype"=>"multipart/form-data"}
+        %label.mklabel
+          %input#file.hide{"name"=>"myfile","type"=>"file"}
+          .mark#list
+            %h1
+              %i.fa.fa-cloud-upload
+              Click para seleccionar

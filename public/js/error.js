@@ -6,4 +6,3 @@ function error(evt) {
 		},5000);
 	}
 }
-window.onload = error

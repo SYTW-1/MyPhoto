@@ -14,5 +14,7 @@ function archivo(evt) {
 	reader.readAsDataURL(f);
 	}
 	$('#save').show();
+	$('#cancel').show();
 }
-document.getElementById('file').addEventListener('change', archivo, false);
+if(document.getElementById('file') != undefined)
+	document.getElementById('file').addEventListener('change', archivo, false);
