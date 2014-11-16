@@ -87,7 +87,7 @@ end
 
 get '/delete/all' do
   Image.all.destroy
-  system("rm -rf public/thumb/*")
+  system("rm -rf public/thumb/*.jpg")
   redirect '/'
 end
 
