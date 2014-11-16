@@ -91,6 +91,12 @@ get '/delete/all' do
   redirect '/'
 end
 
+get '/delete/:id' do
+  Image.detele(:id => params['id'])
+  system("rm -f public/thumb/#{params['id']}-thumb.jpg")
+  redirect '/'
+end
+
 # Handle POST-request (Receive and save the uploaded file)
 post "/upload" do 
   image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
