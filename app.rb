@@ -90,10 +90,14 @@ get "/upload" do
   @str = map()
   haml :upload
 end      
-    
+
+get '/delete/all' do
+  Image.all.destroy
+  redirect '/'
+end
+
 # Handle POST-request (Receive and save the uploaded file)
 post "/upload" do 
-  #File.open('uploads/' + params['myfile'][:filename], "w") do |f|
     image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
     latitude = image.get_exif_by_entry("GPSLatitude")
     longitude = image.get_exif_by_entry("GPSLongitude")
@@ -120,14 +124,12 @@ post "/upload" do
     lat = "#{lat[0]} #{lat[1]}.#{lat[2]} #{GPSLatitudeRef[0][1]}"
     lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
     image.format = 'JPEG'
-    # Se comprime la imagen al 25%
-    puts params
-    image = image.resize(0.25)
+    # Se comprime la imagen al 50%
+    image.resize(0.25)
     img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
-    Image.create(:image => img,:name => params['myfile'][:filename], :latitude => lat, :longitude => lon)
-    image.thumbnail(image.columns*0.2, image.rows*0.2).write("public/thumb/#{Image.count()+1}-thumb.jpg")
-  #end
-  redirect "/upload"
+    id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
+    image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
+  redirect "/"
 end
 
 get "/info" do
