@@ -15,7 +15,7 @@
       %i.fa.fa-camera-retro
       Últimas fotos
       %button.btn.btn-success.pull-right#map{"onclick"=>"javascript: window.location = \"/map\""}
-        %i.fa.fa-map
+        %i.fa.fa-globe
         Ver en un mapa
     %hr.hr
   .row#photobox.js-masonry{"data-masonry-options"=>'{ "columnWidth": 175, "itemSelector": ".item" }'}
@@ -37,7 +37,7 @@
             Entrar con Facebook
         - else
           %button.btn.btn-danger#cancel{"onclick"=>"javascript: window.location = \"/\""}
-            %i.fa.fa-cancel
+            %i.fa.fa-remove
             Cancelar
           %button.btn.btn-success#save{"onclick"=>"javascript: document.getElementById(\"saveform\").submit();"}
             %i.fa.fa-save
