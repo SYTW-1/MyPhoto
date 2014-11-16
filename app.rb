@@ -92,7 +92,8 @@ get '/delete/all' do
 end
 
 get '/delete/:id' do
-  Image.detele(:id => params['id'])
+  id = Image.first(:id => params['id'])
+  id.destroy
   system("rm -f public/thumb/#{params['id']}-thumb.jpg")
   redirect '/'
 end
