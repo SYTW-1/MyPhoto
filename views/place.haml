@@ -1,17 +1,8 @@
-!!!
-%html
-  %head
-    %title Place searches
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    %link{:rel => :stylesheet, :type => :"text/css", :href => "/css/places"}
-    %script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places")
-  %body
-    #map-canvas
+#map-canvas
 :javascript
   var map;
   var infowindow;
-
+  console.log(document.getElementById('map-canvas'));
   function initialize() {
     var pyrmont = new google.maps.LatLng(#{@val_lat}, #{@val_lng});
 

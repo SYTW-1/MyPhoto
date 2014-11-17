@@ -64,7 +64,7 @@
         %hr.hr
       .row#photobox.js-masonry{"data-masonry-options"=>'{ "columnWidth": 175, "itemSelector": ".item" }'}
         - @images.each do |img|
-          %a{:href=>"/places/#{img.name}"}
+          %a{:href=>"/places/#{img.id}"}
             %img.thumbnail.shadow.item{:src => "data:image/png;base64,#{img.image}", :class => "img-responsive"}
       .row
         %h1#upload
