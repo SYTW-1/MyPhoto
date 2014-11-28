@@ -107,22 +107,24 @@ post "/upload" do
   var2 = longitude[0][1]
   if var == nil || var2 == nil
     session['error'] = 'not_coordinates'
-    redirect "/"
+    lat = nil
+    lon = nil
+  else
+    var = var.delete(',')
+    var2 = var2.delete(',')
+    var = var.split(' ')
+    var2 = var2.split(' ')
+    lat = []
+    lon = []
+    var.each do |v|
+      lat << v.split('/')[0]
+    end
+    var2.each do |v|
+      lon << v.split('/')[0]
+    end
+    lat = "#{lat[0]} #{lat[1]}.#{lat[2]} #{GPSLatitudeRef[0][1]}"
+    lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
   end
-  var = var.delete(',')
-  var2 = var2.delete(',')
-  var = var.split(' ')
-  var2 = var2.split(' ')
-  lat = []
-  lon = []
-  var.each do |v|
-    lat << v.split('/')[0]
-  end
-  var2.each do |v|
-    lon << v.split('/')[0]
-  end
-  lat = "#{lat[0]} #{lat[1]}.#{lat[2]} #{GPSLatitudeRef[0][1]}"
-  lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
   image.format = 'JPEG'
   # Se comprime la imagen al 50%
   image.resize(0.25)
@@ -140,15 +142,19 @@ end
 
 get '/places/:id' do
   place = Image.first(:id => params['id'])
-  signo = Hash.new
-  signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
-  lat = place.latitude.split(" ");
-  @val_lat = (((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]).to_s
-  lng = place.longitude.split(" ");
-  @val_lng = (((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]).to_s
-  puts @val_lat
-  puts @val_lng
-  haml :place, :layout => :base
+  if(place.latitude == nil && place.longitude == nil)
+    redirect "/"
+  else
+    signo = Hash.new
+    signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
+    lat = place.latitude.split(" ");
+    @val_lat = (((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]).to_s
+    lng = place.longitude.split(" ");
+    @val_lng = (((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]).to_s
+    puts @val_lat
+    puts @val_lng
+    haml :place, :layout => :base
+  end
 end
 
 def map()
