@@ -151,8 +151,6 @@ get '/places/:id' do
     @val_lat = (((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]).to_s
     lng = place.longitude.split(" ");
     @val_lng = (((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]).to_s
-    puts @val_lat
-    puts @val_lng
     haml :place, :layout => :base
   end
 end
