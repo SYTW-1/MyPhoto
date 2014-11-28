@@ -1,6 +1,11 @@
 #map-canvas
+#results
+  %h2 Results
+  %ul#places
+  %button#More
+
 :javascript
-  var map;
+  var map, placesList;
   var infowindow;
   console.log(document.getElementById('map-canvas'));
   function initialize() {
@@ -16,7 +21,11 @@
       radius: 500,
       types: ['store']
     };
+
+    placesList = document.getElementById('places');
+
     infowindow = new google.maps.InfoWindow();
+
     var service = new google.maps.places.PlacesService(map);
     service.nearbySearch(request, callback);
   }
@@ -29,12 +38,19 @@
     }
   }
 
+  
+
   function createMarker(place) {
     var placeLoc = place.geometry.location;
     var marker = new google.maps.Marker({
       map: map,
       position: place.geometry.location
     });
+
+    placesList.innerHTML += '<li>' + place.name + '</li>';
+
+
+    
 
     google.maps.event.addListener(marker, 'click', function() {
       infowindow.setContent(place.name);
