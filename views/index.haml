@@ -33,6 +33,9 @@
             %i.fa.fa-facebook
             Entrar con Facebook
         - else
+          %button.btn.btn-warning#cancel{"onclick"=>"javascript: document.getElementById(\"saveform\").reset();document.getElementById(\"list\").innerHTML = '';"}
+            %i.fa.fa-trash
+            Cancelar
           %button.btn.btn-success#save{"onclick"=>"javascript: document.getElementById(\"saveform\").submit();"}
             %i.fa.fa-save
             Guardar
@@ -42,11 +45,7 @@
         %h1 Es necesario haber iniciado sesión para realizar esta acción.
     -else
       %form#saveform{"action"=>"/upload","method"=>"post", "enctype"=>"multipart/form-data"}
+        %input#file{"name"=>"myfile","type"=>"file"}
         %label.mklabel
-          %input#file.hide{"name"=>"myfile","type"=>"file"}
           .mark#list
-            %h1
-              %i.fa.fa-cloud-upload
-              Click para seleccionar o
-            %input#fileext{"name"=>"myfile","type"=>"file"}
 
