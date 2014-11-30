@@ -99,8 +99,14 @@
     result += '<div class="col-xs-10"><h1><a href="' + place.url + '" target="_blank" title="Google+">' +place.name + '</a><i class="pull-right fa fa-close" onclick="close_panel(\'' + place.place_id + '\')"></i></h1></div>';
     result += '</div>';
     result += '<div class="row"><div class="col-xs-12"><h2>' + place.formatted_address + '</h2></div></div>';
-    if( place.website != undefined)
+    if( place.website != undefined){
+      var www = place.website;
+      www = www.split(':');
+      www[0] = 'https';
+      www = www.join(':');
+      console.log(www);
       result += '<div class="row tall"><iframe src="' + place.website + '"></iframe></div>';
+    }
     result += '</div>';
 
     return result;
