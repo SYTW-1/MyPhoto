@@ -95,6 +95,7 @@ get '/delete/:id' do
   id = Image.first(:id => params['id'])
   id.destroy
   system("rm -f public/thumb/#{params['id']}-thumb.jpg")
+end
 
 get "/upload" do
   @imagenes = Image.all()
