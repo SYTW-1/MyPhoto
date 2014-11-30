@@ -1,11 +1,14 @@
-#map-canvas
-#results
-  %h2 Results
-  %ul#places
-  %button#More
+.row.tall
+  .col-xs-12.col-md-4.col-lg-2.tall
+    #results
+      %ul#places.list-group
+  .col-xs-12.col-md-8.col-lg-10.tall
+    #map-canvas
+.clear
+#placesPanels
 
 :javascript
-  var map, placesList;
+  var map, placesList,placesPanels;
   var infowindow;
   console.log(document.getElementById('map-canvas'));
   function initialize() {
@@ -23,7 +26,7 @@
     };
 
     placesList = document.getElementById('places');
-
+    placesPanels = document.getElementById('placesPanels');
     infowindow = new google.maps.InfoWindow();
 
     var service = new google.maps.places.PlacesService(map);
@@ -46,14 +49,59 @@
       map: map,
       position: place.geometry.location
     });
-
-    placesList.innerHTML += '<li>' + place.name + '</li>';
-
+    google.maps.event.addListener(marker, 'click', function() {
+      create_panel(place.place_id);
+    });
 
     
+    var request = {
+      placeId: place.place_id
+    };
+    var service = new google.maps.places.PlacesService(map);
+    service.getDetails(request, function(place, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        placesList.innerHTML += getPanel(place);
+      }
+    });
 
     google.maps.event.addListener(marker, 'click', function() {
       infowindow.setContent(place.name);
       infowindow.open(map, this);
     });
+  }
+
+  function getPanel(place){
+    return '<li class="list-group-item"><a onclick="create_panel(\'' + place.place_id + '\')" title="Ver Información">' + place.name + '</a></li>'
+  }
+
+  function create_panel(id){
+    var request = {
+      placeId: id
+    };
+    var service = new google.maps.places.PlacesService(map);
+    service.getDetails(request, function(place, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        placesPanels.innerHTML = panel(place);
+      }
+    });
+  }
+
+  function close_panel(id){
+    var panel = document.getElementById(id);
+    panel.parentNode.removeChild(panel);
+  }
+  
+  function panel(place){
+    result = '';
+    result += '<div id="' + place.place_id + '" class="container panel-info-place">';
+    result += '<div class="row">';
+    result += '<div class="col-xs-2"><img src="' + place.icon + '"/></div>';
+    result += '<div class="col-xs-10"><h1><a href="' + place.url + '" target="_blank" title="Google+">' +place.name + '</a><i class="pull-right fa fa-close" onclick="close_panel(\'' + place.place_id + '\')"></i></h1></div>';
+    result += '</div>';
+    result += '<div class="row"><div class="col-xs-12"><h2>' + place.formatted_address + '</h2></div></div>';
+    if( place.website != undefined)
+      result += '<div class="row tall"><iframe src="' + place.website + '"></iframe></div>';
+    result += '</div>';
+
+    return result;
   }
