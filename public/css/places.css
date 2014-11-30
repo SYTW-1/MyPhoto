@@ -1,0 +1,58 @@
+html, body{
+  height: 100%;
+  margin: 0px;
+  padding: 0px
+}
+
+#map-canvas {
+  height: 100% !important;
+  min-height: 300px;
+}
+
+#results{
+  height: 100% !important;
+  min-height: 300px;
+  background: #CCC;
+  overflow: auto;
+}
+
+#places{
+  margin: 0 10%;
+}
+
+.clear{
+  clear: both;
+}
+
+.tall{
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.list-group-item > a{
+  color: #2A6496 !important;
+}
+
+.list-group-item > a:hover{
+  cursor: pointer;
+}
+
+.panel-info-place{
+  position: absolute;
+  width: 56%;
+  height: 76%;
+  left: 20%;
+  top: 10%;
+  padding: 2%;
+  z-index: 2000;
+  background: #222;
+  color: #f0f0f0;
+  border-radius: 5px;
+  box-shadow: 0 0 12px #222;
+}
+
+.panel-info-place iframe{
+  width: 100%;
+  height: 80%;
+}

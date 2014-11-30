@@ -19,7 +19,7 @@ enable :sessions
 set :session_secret, '*&(^#234a)'
 
 configure :development do
-    DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/development.db")
+  DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/development.db")
 end
 
 configure :production do
@@ -31,7 +31,7 @@ configure :test do
 end
 
 DataMapper::Logger.new($stdout, :debug)
-DataMapper::Model.raise_on_save_failure = true 
+DataMapper::Model.raise_on_save_failure = true
 
 require_relative 'model'
 
@@ -55,7 +55,7 @@ get '/auth/:name/callback' do
   if params[:name] == 'google_oauth2' || params[:name] == 'facebook'
     session[:name] = @auth['info'].first_name + " " + @auth['info'].last_name
     session[:email] = @auth['info'].email
-  elsif params[:name] == 'github' 
+  elsif params[:name] == 'github'
     session[:name] = @auth['info'].nickname
     session[:email] = @auth['info'].email
   end
@@ -71,7 +71,7 @@ get '/' do
   @images = Image.all()
   if session['error'] && session['error'] == 'not_coordinates'
     @error = 'Esta imagen se almacenará pero no se puede ubicar en el mapa debido a que no tiene coordenadas.'
-    session.delete('error') 
+    session.delete('error')
   end
   haml :index, :layout => :base
 end
@@ -95,11 +95,17 @@ get '/delete/:id' do
   id = Image.first(:id => params['id'])
   id.destroy
   system("rm -f public/thumb/#{params['id']}-thumb.jpg")
-  redirect '/'
+
+get "/upload" do
+  @imagenes = Image.all()
+  @str = map()
+  haml :upload
 end
 
+
 # Handle POST-request (Receive and save the uploaded file)
-post "/upload" do 
+
+post "/upload" do
   image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
   latitude = image.get_exif_by_entry("GPSLatitude")
   longitude = image.get_exif_by_entry("GPSLongitude")
@@ -109,8 +115,8 @@ post "/upload" do
   var2 = longitude[0][1]
   if var == nil || var2 == nil
     session['error'] = 'not_coordinates'
-    lat = 'nil'
-    lon = 'nil'
+    lat = nil
+    lon = nil
   else
     var = var.delete(',')
     var2 = var2.delete(',')
@@ -129,8 +135,8 @@ post "/upload" do
   end
   image.format = 'JPEG'
   # Se comprime la imagen al 50%
-  image = image.resize(0.50)
-  img = Base64.encode64(image.to_blob).gsub(/\n/, "") 
+  image.resize(0.25)
+  img = Base64.encode64(image.to_blob).gsub(/\n/, "")
   id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
   image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
   redirect "/"
@@ -139,6 +145,21 @@ end
 get "/map" do
   @str = map()
   haml :map, :layout => :base
+end
+
+get '/places/:id' do
+  place = Image.first(:id => params['id'])
+  if(place.latitude == nil && place.longitude == nil)
+    redirect "/"
+  else
+    signo = Hash.new
+    signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
+    lat = place.latitude.split(" ");
+    @val_lat = (((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]).to_s
+    lng = place.longitude.split(" ");
+    @val_lng = (((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]).to_s
+    haml :place, :layout => :base
+  end
 end
 
 def map()
