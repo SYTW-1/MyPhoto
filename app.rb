@@ -112,8 +112,12 @@ post "/upload" do
   longitude = image.get_exif_by_entry("GPSLongitude")
   GPSLatitudeRef = image.get_exif_by_entry("GPSLatitudeRef")
   GPSLongitudeRef = image.get_exif_by_entry("GPSLongitudeRef")
+
   var = latitude[0][1]
   var2 = longitude[0][1]
+  signo = Hash.new
+  signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
+
   if var == nil || var2 == nil
     session['error'] = 'not_coordinates'
     lat = nil
@@ -131,8 +135,8 @@ post "/upload" do
     var2.each do |v|
       lon << v.split('/')[0]
     end
-    lat = "#{lat[0]} #{lat[1]}.#{lat[2]} #{GPSLatitudeRef[0][1]}"
-    lon = "#{lon[0]} #{lon[1]}.#{lon[2]} #{GPSLongitudeRef[0][1]}"
+    lat = ((lat[0]).to_f + (lat[1]).to_f/60 + (lat[2]).to_f/(10000*3600)) * signo[GPSLatitudeRef[0][1]]
+    lon = ((lon[0]).to_f + (lon[1]).to_f/60 + (lon[2]).to_f/(10000*3600)) * signo[GPSLongitudeRef[0][1]]
   end
   image.format = 'JPEG'
   # Se comprime la imagen al 50%
@@ -153,12 +157,8 @@ get '/places/:id' do
   if(place.latitude == nil && place.longitude == nil)
     redirect "/"
   else
-    signo = Hash.new
-    signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
-    lat = place.latitude.split(" ");
-    @val_lat = (((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]).to_s
-    lng = place.longitude.split(" ");
-    @val_lng = (((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]).to_s
+    @val_lat = place.latitude
+    @val_lng = place.longitude
     haml :place, :layout => :base
   end
 end
@@ -166,15 +166,9 @@ end
 def map()
   str = ''
   imagenes = Image.all()
-  signo = Hash.new
-  signo = {'N'=>1,'S'=>-1,'E'=>1,'W'=>-1}
   imagenes.each do |item|
-    if (item.latitude != 'nil')
-      lat = item.latitude.split(" ");
-      val_lat = ((lat[0]).to_f + (lat[1]).to_f/60)*signo[lat[2]]
-      lng = item.longitude.split(" ");
-      val_lng = ((lng[0]).to_f + (lng[1]).to_f/60)*signo[lng[2]]
-      str += "var pos = new google.maps.LatLng(#{(val_lat).to_s},#{(val_lng).to_s}); var marker = new google.maps.Marker({ map: map, position: pos, icon: \"/thumb/#{item.id}-thumb.jpg\" }); google.maps.event.addListener(marker, 'click', function(){ document.location = \"/view/#{item.id}\"; }); map.setCenter(pos);"
+    if (item.latitude != nil)
+      str += "var pos = new google.maps.LatLng(#{(item.latitude).to_s},#{(item.longitude).to_s}); var marker = new google.maps.Marker({ map: map, position: pos, icon: \"/thumb/#{item.id}-thumb.jpg\" }); google.maps.event.addListener(marker, 'click', function(){ document.location = \"/places/#{item.id}\"; }); map.setCenter(pos);"
     end
   end
   str
