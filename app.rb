@@ -110,8 +110,8 @@ post "/upload" do
   image   = Magick::Image.read(params['myfile'][:tempfile].path)[0]
   latitude = image.get_exif_by_entry("GPSLatitude")
   longitude = image.get_exif_by_entry("GPSLongitude")
-  GPSLatitudeRef = image.get_exif_by_entry("GPSLatitudeRef")
-  GPSLongitudeRef = image.get_exif_by_entry("GPSLongitudeRef")
+  gpslatitudeRef = image.get_exif_by_entry("GPSLatitudeRef")
+  gpslongitudeRef = image.get_exif_by_entry("GPSLongitudeRef")
 
   var = latitude[0][1]
   var2 = longitude[0][1]
@@ -135,8 +135,8 @@ post "/upload" do
     var2.each do |v|
       lon << v.split('/')[0]
     end
-    lat = ((lat[0]).to_f + (lat[1]).to_f/60 + (lat[2]).to_f/(10000*3600)) * signo[GPSLatitudeRef[0][1]]
-    lon = ((lon[0]).to_f + (lon[1]).to_f/60 + (lon[2]).to_f/(10000*3600)) * signo[GPSLongitudeRef[0][1]]
+    lat = ((lat[0]).to_f + (lat[1]).to_f/60 + (lat[2]).to_f/(10000*3600)) * signo[gpslatitudeRef[0][1]]
+    lon = ((lon[0]).to_f + (lon[1]).to_f/60 + (lon[2]).to_f/(10000*3600)) * signo[gpslongitudeRef[0][1]]
   end
   image.format = 'JPEG'
   # Se comprime la imagen al 50%
