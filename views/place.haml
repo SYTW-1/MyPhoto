@@ -13,7 +13,6 @@
   console.log(document.getElementById('map-canvas'));
   function initialize() {
     var pyrmont = new google.maps.LatLng(#{@val_lat}, #{@val_lng});
-
     map = new google.maps.Map(document.getElementById('map-canvas'), {
       center: pyrmont,
       zoom: 15

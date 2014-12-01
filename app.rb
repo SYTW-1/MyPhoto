@@ -129,14 +129,18 @@ post "/upload" do
     var2 = var2.split(' ')
     lat = []
     lon = []
+    div_lat = []
+    div_lon = []
     var.each do |v|
       lat << v.split('/')[0]
+      div_lat << v.split('/')[1]
     end
     var2.each do |v|
       lon << v.split('/')[0]
+      div_lon << v.split('/')[1]
     end
-    lat = ((lat[0]).to_f + (lat[1]).to_f/60 + (lat[2]).to_f/(10000*3600)) * signo[gpslatitudeRef[0][1]]
-    lon = ((lon[0]).to_f + (lon[1]).to_f/60 + (lon[2]).to_f/(10000*3600)) * signo[gpslongitudeRef[0][1]]
+    lat = ((lat[0]).to_f + (lat[1]).to_f/60 + (lat[2]).to_f/((div_lat[2]).to_f*3600)) * signo[gpslatitudeRef[0][1]]
+    lon = ((lon[0]).to_f + (lon[1]).to_f/60 + (lon[2]).to_f/((div_lon[2]).to_f*3600)) * signo[gpslongitudeRef[0][1]]
   end
   image.format = 'JPEG'
   # Se comprime la imagen al 50%
@@ -144,6 +148,7 @@ post "/upload" do
   img = Base64.encode64(image.to_blob).gsub(/\n/, "")
   id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
   image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
+  puts image.get_exif_by_entry()
   redirect "/"
 end
 
