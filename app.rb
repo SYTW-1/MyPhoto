@@ -146,7 +146,7 @@ post "/upload" do
   # Se comprime la imagen al 50%
   image.resize(0.25)
   img = Base64.encode64(image.to_blob).gsub(/\n/, "")
-  id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
+  id_image = Image.create(:image => img, :latitude => lat, :longitude => lon, :name => session[:name], :email => session[:email])
   image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
   puts image.get_exif_by_entry()
   redirect "/"

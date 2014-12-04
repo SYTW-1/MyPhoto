@@ -11,4 +11,6 @@ class Image
     property :image, Text ,:length => 99999999
     property  :latitude,    String
     property  :longitude,   String
+    property :name, String
+    property :email, String
 end
