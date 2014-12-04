@@ -149,7 +149,11 @@ post "/upload" do
   image = image.resize(0.25)
   #img = Base64.encode64(image.to_blob).gsub(/\n/, "")
   #id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
-  id_image = Image.create(:latitude => lat, :longitude => lon, , :name => session[:name], :email => session[:email])
+  if(!session[:name])
+    id_image = Image.create(:latitude => lat, :longitude => lon, , :name => "public", :email => "public")
+  else
+    id_image = Image.create(:latitude => lat, :longitude => lon, , :name => session[:name], :email => session[:email])
+  end
   image.write("public/full/#{id_image.id}-full.jpg")
   image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
   redirect "/"
