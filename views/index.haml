@@ -21,7 +21,7 @@
   .row#photobox.js-masonry{"data-masonry-options"=>'{ "columnWidth": 175, "itemSelector": ".item" }'}
     - @images.each do |img|
       %a{:href => "/places/#{img.id}", :title => "Ver imagen"}
-        %img.thumbnail.shadow.item.img-responsive{:src => "data:image/png;base64,#{img.image}"}
+        %img.thumbnail.shadow.item.img-responsive{:src => "/full/#{img.id}-full.jpg"}
   .row
     %h1#upload
       %i.fa.fa-cloud-upload
