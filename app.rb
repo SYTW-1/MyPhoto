@@ -78,7 +78,7 @@ end
 
 get '/view/:id' do
   data = Image.first(:id => params['id'])
-  "<img src=\"data:image/png;base64,#{data.image}\" />"
+  "<img src=\"/public/full/#{data.id}-full.jpg\" />"
 end
 
 get '/thumb/:id' do
@@ -88,6 +88,7 @@ end
 get '/delete/all' do
   Image.all.destroy
   system("rm -rf public/thumb/*.jpg")
+  system("rm -rf public/full/*.jpg")
   redirect '/'
 end
 
@@ -95,6 +96,7 @@ get '/delete/:id' do
   id = Image.first(:id => params['id'])
   id.destroy
   system("rm -f public/thumb/#{params['id']}-thumb.jpg")
+  system("rm -f public/full/#{params['id']}-full.jpg")
 end
 
 get "/upload" do
@@ -143,12 +145,13 @@ post "/upload" do
     lon = ((lon[0]).to_f + (lon[1]).to_f/60 + (lon[2]).to_f/((div_lon[2]).to_f*3600)) * signo[gpslongitudeRef[0][1]]
   end
   image.format = 'JPEG'
-  # Se comprime la imagen al 50%
-  image.resize(0.25)
-  img = Base64.encode64(image.to_blob).gsub(/\n/, "")
-  id_image = Image.create(:image => img, :latitude => lat, :longitude => lon, :name => session[:name], :email => session[:email])
+  # Se comprime la imagen al 25%
+  image = image.resize(0.25)
+  #img = Base64.encode64(image.to_blob).gsub(/\n/, "")
+  #id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
+  id_image = Image.create(:latitude => lat, :longitude => lon, , :name => session[:name], :email => session[:email])
+  image.write("public/full/#{id_image.id}-full.jpg")
   image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
-  puts image.get_exif_by_entry()
   redirect "/"
 end
 

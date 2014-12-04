@@ -61,28 +61,37 @@ hr.hr{
 }
 
 input.hide{
-  visibility:hidden;
+  display:none;
 }
 
 label.mklabel{
   position: relative;
   width: 100%;
-  margin-bottom: 10%;
+  padding-bottom: 10%;
 }
-
 .mark{
-  margin: 0 20%;
+  margin: 5% 20%;
   width: 60%;
   border: dashed;
   background: #AAA;
 }
-
 .mark > h1{
   text-align: center;
 }
-
 .mark img{
   max-width: 100%;
+}
+.mark#loading{
+  position: absolute;
+  top: -25px;
+  z-index: 1000;
+  display: none;
+  background: transparent !important;
+  border: none;
+}
+.mark#loading > img{
+  width: 220px !important;
+  height: 19px !important;
 }
 
 #saveform > input{
@@ -114,4 +123,7 @@ label.mklabel{
 #map-canvas {
   margin: 0px;
   padding: 0px
+}
+.page-header{
+  border-bottom: none !important;
 }
