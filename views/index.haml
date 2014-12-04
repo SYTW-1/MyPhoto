@@ -39,7 +39,7 @@
           %button.btn.btn-warning#cancel{"onclick"=>"javascript: document.getElementById(\"saveform\").reset();document.getElementById(\"list\").innerHTML = '';"}
             %i.fa.fa-trash
             Cancelar
-          %button.btn.btn-success#save{"onclick"=>"javascript: document.getElementById(\"saveform\").submit();"}
+          %button.btn.btn-success#save{"onclick"=>"javascript: document.getElementById(\"saveform\").submit();document.getElementById(\"loading\").style.display = 'block';"}
             %i.fa.fa-save
             Guardar
     %hr.hr
@@ -48,6 +48,11 @@
         %h1 Es necesario haber iniciado sesión para realizar esta acción.
     -else
       %form#saveform{"action"=>"/upload","method"=>"post", "enctype"=>"multipart/form-data"}
-        %input#file{"name"=>"myfile","type"=>"file"}
         %label.mklabel
-          .mark#list
+          %input#file.hide{"name"=>"myfile","type"=>"file"}
+            .mark#list
+              %h1
+                %i.fa.fa-cloud-upload
+                Click para seleccionar
+            .mark#loading
+              %img{:src=>"/images/loading.gif"}
