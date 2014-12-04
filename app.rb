@@ -146,7 +146,7 @@ post "/upload" do
   end
   image.format = 'JPEG'
   # Se comprime la imagen al 25%
-  image.resize(0.25)
+  image = image.resize(0.25)
   #img = Base64.encode64(image.to_blob).gsub(/\n/, "")
   #id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
   id_image = Image.create(:latitude => lat, :longitude => lon)
