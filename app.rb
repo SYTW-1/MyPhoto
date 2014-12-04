@@ -42,10 +42,9 @@ DataMapper.auto_upgrade!
 
 #OmniAuth y get's de autenticación
 use OmniAuth::Builder do
-# config = YAML.load_file 'config/config.yml'
-#  provider :google_oauth2, config['identifier_google'], config['secret_google']
-#  provider :github, config['identifier_github'], config['secret_github']
-# provider :facebook, config['facebook-client'], config['facebook-secret']
+  config = YAML.load_file 'config/config.yml'
+  provider :google_oauth2, config['identifier_google'], config['secret_google']
+  provider :facebook, config['identifier_facebook'], config['secret_facebook']
 end
 
 get '/auth/:name/callback' do
@@ -68,7 +67,11 @@ get '/auth/logout' do
 end
 
 get '/' do
-  @images = Image.all()
+  if(!session[:name])
+    @images = Image.all()
+  else
+    @images = Image.all(:email => session[:email])
+  end
   if session['error'] && session['error'] == 'not_coordinates'
     @error = 'Esta imagen se almacenará pero no se puede ubicar en el mapa debido a que no tiene coordenadas.'
     session.delete('error')
@@ -150,9 +153,9 @@ post "/upload" do
   #img = Base64.encode64(image.to_blob).gsub(/\n/, "")
   #id_image = Image.create(:image => img, :latitude => lat, :longitude => lon)
   if(!session[:name])
-    id_image = Image.create(:latitude => lat, :longitude => lon, , :name => "public", :email => "public")
+    id_image = Image.create(:latitude => lat, :longitude => lon, :name => "public", :email => "public")
   else
-    id_image = Image.create(:latitude => lat, :longitude => lon, , :name => session[:name], :email => session[:email])
+    id_image = Image.create(:latitude => lat, :longitude => lon, :name => session[:name], :email => session[:email])
   end
   image.write("public/full/#{id_image.id}-full.jpg")
   image.resize_to_fit(48,48).write("public/thumb/#{id_image.id}-thumb.jpg")
@@ -177,7 +180,11 @@ end
 
 def map()
   str = ''
-  imagenes = Image.all()
+  if(!session[:name])
+    imagenes = Image.all()
+  else
+    imagenes = Image.all(:email => session[:email])
+  end
   imagenes.each do |item|
     if (item.latitude != nil)
       str += "var pos = new google.maps.LatLng(#{(item.latitude).to_s},#{(item.longitude).to_s}); var marker = new google.maps.Marker({ map: map, position: pos, icon: \"/thumb/#{item.id}-thumb.jpg\" }); google.maps.event.addListener(marker, 'click', function(){ document.location = \"/places/#{item.id}\"; }); map.setCenter(pos);"
