@@ -124,3 +124,6 @@ label.mklabel{
   margin: 0px;
   padding: 0px
 }
+.page-header{
+  border-bottom: none !important;
+}
