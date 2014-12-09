@@ -15,9 +15,19 @@
     var pyrmont = new google.maps.LatLng(#{@val_lat}, #{@val_lng});
     map = new google.maps.Map(document.getElementById('map-canvas'), {
       center: pyrmont,
-      zoom: 15
+      zoom: 15,
     });
 
+    var marker = new google.maps.Marker({
+      map: map,
+      position: pyrmont,
+      icon: "/thumb/#{@id}-thumb.jpg"
+    });
+
+    google.maps.event.addListener(marker, 'click', function(){
+      document.location = "/map";
+    });
+    
     var request = {
       location: pyrmont,
       radius: 500,

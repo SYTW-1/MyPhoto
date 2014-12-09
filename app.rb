@@ -42,9 +42,9 @@ DataMapper.auto_upgrade!
 
 #OmniAuth y get's de autenticación
 use OmniAuth::Builder do
-  config = YAML.load_file 'config/config.yml'
-  provider :google_oauth2, config['identifier_google'], config['secret_google']
-  provider :facebook, config['identifier_facebook'], config['secret_facebook']
+  #config = YAML.load_file 'config/config.yml'
+  #provider :google_oauth2, config['identifier_google'], config['secret_google']
+  #provider :facebook, config['identifier_facebook'], config['secret_facebook']
 end
 
 get '/auth/:name/callback' do
@@ -174,6 +174,7 @@ get '/places/:id' do
   else
     @val_lat = place.latitude
     @val_lng = place.longitude
+    @id = place.id
     haml :place, :layout => :base
   end
 end
