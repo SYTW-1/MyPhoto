@@ -10,18 +10,6 @@
   .row.space
   .row.delimiter
 .container
-  .page-header
-    %h1#photo
-      %i.fa.fa-camera-retro
-      Últimas fotos
-      %button.btn.btn-success.pull-right#map{"onclick"=>"javascript: window.location = \"/map\""}
-        %i.fa.fa-globe
-        Ver en un mapa
-    %hr.hr
-  .row#photobox.js-masonry{"data-masonry-options"=>'{ "columnWidth": 175, "itemSelector": ".item" }'}
-    - @images.each do |img|
-      %a{:href => "/places/#{img.id}", :title => "Ver imagen"}
-        %img.thumbnail.shadow.item.img-responsive{:src => "/full/#{img.id}-full.jpg"}
   .row
     %h1#upload
       %i.fa.fa-cloud-upload
@@ -56,3 +44,15 @@
                 Click para seleccionar
             .mark#loading
               %img{:src=>"/images/loading.gif"}
+  .page-header
+    %h1#photo
+      %i.fa.fa-camera-retro
+      Últimas fotos
+      %button.btn.btn-success.pull-right#map{"onclick"=>"javascript: window.location = \"/map\""}
+        %i.fa.fa-globe
+        Ver en un mapa
+    %hr.hr
+  .row#photobox.js-masonry{"data-masonry-options"=>'{ "columnWidth": 175, "itemSelector": ".item" }'}
+    - @images.each do |img|
+      %a{:href => "/places/#{img.id}", :title => "Ver imagen"}
+        %img.thumbnail.shadow.item.img-responsive{:src => "/full/#{img.id}-full.jpg"}
